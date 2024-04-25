@@ -91,20 +91,19 @@ int main() {
       printf("ssd_qp is nullptr\n");
       return 1;
     }
-
+    finished = false;
     spdk_nvme_ns_cmd_write(ns_list[i], ssd_qp, write_buf, 0,
                            kDataLength /
                                spdk_nvme_ns_get_sector_size(ns_list[i]),
                            server_spdk_cmd_cb, (void *)"write", 0);
-    finished = false;
     while (!finished) {
       spdk_nvme_qpair_process_completions(ssd_qp, 0);
     }
+    finished = false;
     spdk_nvme_ns_cmd_read(ns_list[i], ssd_qp, read_buf, 0,
                           kDataLength /
                               spdk_nvme_ns_get_sector_size(ns_list[i]),
                           server_spdk_cmd_cb, (void *)"read", 0);
-    finished = false;
     while (!finished) {
       spdk_nvme_qpair_process_completions(ssd_qp, 0);
     }
